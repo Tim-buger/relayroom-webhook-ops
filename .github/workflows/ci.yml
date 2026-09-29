@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --all-extras
+      - run: uv run ruff check .
+      - run: uv run pytest -q
+      - run: uv run alembic upgrade head
+        env:
+          DATABASE_URL: sqlite+aiosqlite:///./migration-smoke.db

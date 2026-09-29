@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="RelayRoom webhook delivery operations console">
+    <title>RelayRoom — Delivery operations</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="RelayRoom home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>RelayRoom</span>
+      </a>
+      <div class="environment"><span class="live-dot"></span> local environment</div>
+      <nav aria-label="Primary">
+        <a class="active" href="/">Deliveries</a>
+        <a href="/docs">API docs ↗</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="workspace-head" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Stripe → Northwind CRM</p>
+          <h1 id="page-title">Delivery operations</h1>
+          <p class="subhead">Inspect failures, verify attempts, and recover webhook deliveries.</p>
+        </div>
+        <div class="demo-controls">
+          <label for="destination-mode">Destination response</label>
+          <select id="destination-mode">
+            <option value="success">204 — healthy</option>
+            <option value="failure">503 — unavailable</option>
+            <option value="rejected">422 — rejected</option>
+            <option value="timeout">timeout</option>
+          </select>
+          <button class="button primary" id="send-event" type="button">Send test event</button>
+        </div>
+      </section>
+
+      <section class="status-strip" aria-label="Delivery status summary">
+        <button class="metric active" data-filter="all" type="button">
+          <span>All events</span><strong id="count-all">—</strong>
+        </button>
+        <button class="metric" data-filter="retrying" type="button">
+          <span>Retrying</span><strong id="count-retrying">—</strong>
+        </button>
+        <button class="metric" data-filter="dead_letter" type="button">
+          <span>Dead letter</span><strong id="count-dead_letter">—</strong>
+        </button>
+        <button class="metric" data-filter="delivered" type="button">
+          <span>Delivered</span><strong id="count-delivered">—</strong>
+        </button>
+      </section>
+
+      <div class="content-grid">
+        <section class="event-log" aria-labelledby="event-log-title">
+          <div class="section-bar">
+            <div>
+              <h2 id="event-log-title">Event log</h2>
+              <span id="last-updated">Checking connection…</span>
+            </div>
+            <button class="icon-button" id="refresh" type="button" aria-label="Refresh events">↻</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Received</th>
+                  <th>Event</th>
+                  <th>Status</th>
+                  <th>Attempts</th>
+                  <th>Last response</th>
+                </tr>
+              </thead>
+              <tbody id="event-rows"></tbody>
+            </table>
+            <div class="empty" id="empty-state" hidden>
+              <span class="empty-icon">↳</span>
+              <h3>No deliveries in this view</h3>
+              <p>Change the filter or send a test event to start the workflow.</p>
+            </div>
+          </div>
+        </section>
+
+        <aside class="inspector" aria-labelledby="inspector-title">
+          <div class="inspector-empty" id="inspector-empty">
+            <span>01</span>
+            <h2 id="inspector-title">Select an event</h2>
+            <p>Review its payload, delivery attempts, and recovery options here.</p>
+          </div>
+          <div id="inspector-content" hidden>
+            <div class="inspector-head">
+              <div>
+                <p class="eyebrow">Selected event</p>
+                <h2 id="detail-type"></h2>
+                <code id="detail-id"></code>
+              </div>
+              <span id="detail-status"></span>
+            </div>
+            <dl class="fact-grid">
+              <div><dt>Received</dt><dd id="detail-received"></dd></div>
+              <div><dt>Delivery attempts</dt><dd id="detail-attempts"></dd></div>
+              <div><dt>Destination</dt><dd>Northwind CRM</dd></div>
+              <div><dt>Semantics</dt><dd>At least once</dd></div>
+            </dl>
+            <section class="detail-section">
+              <div class="detail-title"><h3>Attempt history</h3><span>Newest last</span></div>
+              <ol class="timeline" id="attempt-timeline"></ol>
+            </section>
+            <section class="detail-section payload-section">
+              <div class="detail-title"><h3>Raw payload</h3><button id="copy-payload" type="button">Copy</button></div>
+              <pre id="detail-payload"></pre>
+            </section>
+            <div class="recovery" id="recovery" hidden>
+              <p><strong>Ready for recovery</strong><br>Set the destination to healthy, then replay this event.</p>
+              <button class="button danger" id="replay-event" type="button">Replay delivery</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>
