@@ -2,6 +2,8 @@
 
 RelayRoom is a focused reference implementation of a reliable Stripe-to-CRM integration. It accepts signed events, persists them before processing, delivers them asynchronously, records each attempt, retries transient failures, and provides a safe recovery path.
 
+![RelayRoom delivery operations console](docs/images/relayroom-console.png)
+
 This is deliberately not a generic Hookdeck or Svix clone. It demonstrates the engineering required when a client needs custom business logic and an owned recovery workflow around one integration.
 
 ## What the demo proves

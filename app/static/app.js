@@ -118,6 +118,7 @@ function selectEvent(id) {
 async function loadEvents({ quiet = false } = {}) {
   try {
     state.events = await api("/api/v1/events?limit=100");
+    if (!state.selectedId && state.events.length) state.selectedId = state.events[0].id;
     renderCounts();
     renderRows();
     if (state.selectedId) renderInspector(state.events.find((event) => event.id === state.selectedId));
